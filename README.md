@@ -18,10 +18,9 @@
 
 ## 👥 Team Members
 
-| <img src="https://github.com/minchaeki.png" width="160px"> | <img src="https://github.com/juyeonbaeck.png" width="160px"> | <img src="https://github.com/minykang.png" width="160px"> | <img src="https://github.com/Junhoss.png" width="160px"> | <img src="https://github.com/jongyeon0214.png" width="160px"> |
-| :---: | :---: | :---: | :---: | :---: |
-| [김민채](https://github.com/minchaeki) | [백주연](https://github.com/juyeonbaeck) | [강민영](https://github.com/minykang) | [이준호](https://github.com/Junhoss) | [김종연](https://github.com/jongyeon0214) |
-
+| <img src="https://github.com/minykang.png" width="160px"> | <img src="https://github.com/minchaeki.png" width="160px"> | <img src="https://github.com/jongyeon0214.png" width="160px"> | <img src="https://github.com/juyeonbaeck.png" width="160px"> | <img src="https://github.com/Junhoss.png" width="160px"> | <img src="https://github.com/chaeyuuu.png" width="160px"> |
+| :---: | :---: | :---: | :---: | :---: | :---: |
+| [강민영](https://github.com/minykang) | [김민채](https://github.com/minchaeki) | [김종연](https://github.com/jongyeon0214) | [백주연](https://github.com/juyeonbaeck) | [이준호](https://github.com/Junhoss) | [이채유](https://github.com/chaeyuuu) |
 ---
 
 ## 📘 Index
