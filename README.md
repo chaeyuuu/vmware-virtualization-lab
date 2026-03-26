@@ -86,33 +86,58 @@ USB 부팅으로 ESXi를 설치하고, DCUI 인터페이스를 통해 Management
 
 ---
 
-## 💾 03 — 공유 스토리지 구성 (iSCSI / NFS)
+## 💾 03. 공유 스토리지 구성 (iSCSI 기반 VMFS)
 
-> 모든 ESXi 호스트가 동일한 스토리지를 공유하는 환경 구성 — vMotion · HA의 필수 전제 조건
 
-### 1. Windows Server iSCSI Target 설정
+vSphere 클러스터의 핵심 기능인 **vMotion**과 **HA(High Availability)**를 구현하기 위해, Windows Server를 활용한 iSCSI 공유 스토리지 환경을 구축했습니다.
 
-- Windows Server에서 iSCSI Target 역할 추가 및 가상 디스크(VHD) 생성
-- 이니시에이터 IQN 등록 및 접근 권한 부여
+---
 
-### 2. ESXi iSCSI Initiator 연결 및 VMFS 데이터스토어 생성
+### 1. 개요 및 의사결정 (Storage Strategy)
 
-- 각 ESXi 호스트에서 소프트웨어 iSCSI 어댑터 추가
-- Storage 전용 VMkernel에 포트 바인딩하여 트래픽 격리
-- Dynamic Discovery로 Target 등록 → LUN 인식 → VMFS 6 데이터스토어 생성
+단순한 파일 공유 방식인 NFS와 블록 스토리지 방식인 iSCSI 중, 가상화 환경에 최적화된 **iSCSI(VMFS)**를 선택하여 구축했습니다.
 
-### 3. NFS 공유 스토리지
+- **선택 이유:** VMFS(Virtual Machine File System)는 다중 호스트가 동일한 LUN에 동시 접근할 때 데이터 무결성을 보장하는 **Distributed Locking** 메커니즘을 지원하며, 고성능 I/O 처리에 유리합니다.
+- **할당 용량:** Windows Server 내 300GB VHDX 생성 및 할당.
 
-- NFS Share 마운트 → ESXi 전체 호스트 자동 전파
-- 데이터스토어 자동 전파 원리 (vCenter 중앙 관리 / 동일 스토리지 구독 / 클러스터 내 공유 정책)
+---
 
-### iSCSI vs NFS 비교
+### 2. Windows Server: iSCSI Target 설정
 
-| 항목 | iSCSI (VMFS) | NFS |
-|------|-------------|-----|
-| 프로토콜 계층 | 블록 스토리지 | 파일 스토리지 |
-| 동시 접근 | 단일 호스트 전용 | 다중 호스트 동시 가능 |
-| 주요 용도 | 고성능 VM 워크로드 | 공유 템플릿 · ISO 배포 |
+Windows Server를 '하드디스크를 빌려주는 주인'으로 만드는 과정입니다.
+
+### 📍 Step 1: iSCSI 대상 서버 역할 설치
+
+1. **서버 관리자** 실행 → [관리] → [역할 및 기능 추가].
+2. `파일 및 저장소 서비스` > `파일 및 iSCSI 서비스` > **[iSCSI 대상 서버]** 체크 후 설치.
+
+### 📍 Step 2: iSCSI 가상 디스크 및 대상(Target) 지정
+
+1. **가상 디스크 생성:** 300GB 용량의 `.vhdx` 파일을 생성합니다.
+2. **접근 권한(IQN) 등록:** 각 ESXi 호스트의 고유 식별자인 **IQN**을 등록하여 지정된 호스트만 스토리지를 점유할 수 있도록 보안을 설정합니다.
+    
+    > **IQN이란?** `iqn.1998-01.com.vmware:esxi-01` 처럼 IP가 바뀌어도 장치를 식별할 수 있는 고유 주소입니다.
+    > 
+
+---
+
+### 3. ESXi: iSCSI Initiator 연결 및 VMFS 구성
+
+각 ESXi 호스트에서 네트워크를 통해 300GB 디스크를 '내 것'처럼 인식시키는 과정입니다.
+
+### 📍 Step 1: 어댑터 활성화 및 네트워크 바인딩
+
+- [스토리지] > [어댑터] > **[소프트웨어 iSCSI 추가]**를 클릭합니다.
+- **Port Binding:** 스토리지 전용 VMkernel 포트를 어댑터에 바인딩하여 관리 트래픽과의 간섭을 차단합니다.
+
+### 📍 Step 2: Dynamic Discovery & Rescan
+
+- Windows Server의 IP(**10.10.10.2**)를 대상으로 등록하고 '다시 검사(Rescan)'를 수행합니다.
+- 정상적으로 연결되면 300GB 용량의 **MSFT iSCSI Disk**가 장치 목록에 나타납니다.
+
+### 📍 Step 3: VMFS 6 데이터스토어 생성
+
+인식된 디스크를 vSphere 표준 파일 시스템으로 포맷합니다.
 
 ---
 
