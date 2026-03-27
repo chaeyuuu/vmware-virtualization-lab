@@ -10,12 +10,6 @@
 
 ---
 
-## 📐 Architecture
-
-> *(아키텍처 구조도 이미지 삽입)*
-
----
-
 ## 👥 Team Members
 
 | <img src="https://github.com/minykang.png" width="160px"> | <img src="https://github.com/minchaeki.png" width="160px"> | <img src="https://github.com/jongyeon0214.png" width="160px"> | <img src="https://github.com/juyeonbaeck.png" width="160px"> | <img src="https://github.com/Junhoss.png" width="160px"> | <img src="https://github.com/chaeyuuu.png" width="160px"> |
@@ -30,6 +24,12 @@
 - [03 — 공유 스토리지 구성 (iSCSI / NFS)](#-day-03--공유-스토리지-구성-iscsi--nfs)
 - [04 — 클러스터 고가용성 (HA / DRS)](#-day-04--클러스터-고가용성-ha--drs)
 - [05 — 서비스 배포 및 운영](#-day-05--서비스-배포-및-운영)
+
+---
+
+## 📐 Architecture
+
+![img_1.png](images/img_1_1.png)
 
 ---
 
